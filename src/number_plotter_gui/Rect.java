@@ -1,4 +1,4 @@
-package number_visualization;
+package number_plotter_gui;
 
 public class Rect {
 	private float x1, y1, x2, y2;

@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Number Plotter (2)"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Number Plotter"/>
 	<classpathentry kind="lib" path="lib/controlP5.jar"/>
 	<classpathentry kind="lib" path="lib/core.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OOControl"/>
