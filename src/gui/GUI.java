@@ -12,6 +12,7 @@ import curves.Curve;
 import curves.Diamond;
 import curves.Triangle;
 import curves.Typewriter;
+import curves.UlamSpiral;
 import draw_modes.DrawMode;
 import draw_modes.ToChar;
 import draw_modes.ToShape;
@@ -22,7 +23,6 @@ import gui.Displays.DrawShapeToggleDisplay;
 import gui.Displays.StringToggleDisplay;
 import gui.Displays.TriangleToggleDisplay;
 import gui.Displays.TypewriterToggleDisplay;
-import gui.Displays.Ulam;
 import gui.Displays.UlamToggleDisplay;
 import int_properties.FactorCount;
 import int_properties.Fibonacci;
@@ -96,7 +96,7 @@ public class GUI extends PApplet implements ControllerListener {
         toggles.put(Curve.class.getSimpleName(), new Toggle[] {
             createToggle(1, new DiamondToggleDisplay(5), new Rect(x, y, w1, h, CORNER), Curve.class.getSimpleName(), Diamond.class.getSimpleName()),
             createToggle(1, new TypewriterToggleDisplay(5), new Rect(x += w1+xMargin, y, w1, h, CORNER), Curve.class.getSimpleName(), Typewriter.class.getSimpleName()),
-            createToggle(1, new UlamToggleDisplay(5), new Rect(x += w1+xMargin, y, w1, h, CORNER), Curve.class.getSimpleName(), Ulam.class.getSimpleName()),
+            createToggle(1, new UlamToggleDisplay(5), new Rect(x += w1+xMargin, y, w1, h, CORNER), Curve.class.getSimpleName(), UlamSpiral.class.getSimpleName()),
             createToggle(1, new TriangleToggleDisplay(5), new Rect(x += w1+xMargin, y, w1, h, CORNER), Curve.class.getSimpleName(), Triangle.class.getSimpleName())
         });
         
@@ -147,6 +147,7 @@ public class GUI extends PApplet implements ControllerListener {
         t.setDisplay(display);
         t.setRect(rect);
         t.setGroupName(groupName);
+        t.setName(name);
         return t;
     }
 
@@ -167,9 +168,9 @@ public class GUI extends PApplet implements ControllerListener {
         if (ts != null) {
             for (int i=0; i<ts.length; i++) {
                 ts[i].setState(ts[i] == t);
-                controllable.setVariable(t.getGroupName(), t.getName());
             }
         }
+        controllable.setVariable(t.getGroupName(), t.getName());
     }
     
     @Override

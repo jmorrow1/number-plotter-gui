@@ -1,5 +1,7 @@
 package number_plotter_gui;
 
+import java.util.HashMap;
+
 import curves.Curve;
 import curves.Diamond;
 import curves.Point;
@@ -14,10 +16,10 @@ import geom.Rect;
 import gui.GUI;
 import int_properties.IntProperty;
 import int_properties.IntSequence;
-import int_properties.Multiples;
 import int_properties.Integers;
-import int_properties.Powers;
 import int_properties.IsPrime;
+import int_properties.Multiples;
+import int_properties.Powers;
 import int_properties.RandomInt;
 import processing.core.PApplet;
 
@@ -42,23 +44,27 @@ public class App extends PApplet implements NumberPlotterControllable {
     private DrawMode drawMode;
 
     // All possible sequences
+    private HashMap<String, IntSequence> sequences = new HashMap<String, IntSequence>();
     private Integers integers;
     private Multiples multiples;
     private Powers powers;
 
     // All possible curves
+    private HashMap<String, Curve> curves = new HashMap<String, Curve>();
     private Diamond diamond;
     private UlamSpiral ulamSpiral;
     private Typewriter typewriter;
     private Triangle triangle;
 
     // All possible properties
+    private HashMap<String, IntProperty> properties = new HashMap<String, IntProperty>();
     private Multiples isDivisibleBy;
     private Powers isAnyPower;
     private RandomInt random;
     private IsPrime isPrime;
 
     // All possible draw modes
+    private HashMap<String, DrawMode> drawModes = new HashMap<String, DrawMode>();
     private ToChar toChar;
     private ToImage toImg;
     private ToShape toShape;
@@ -82,25 +88,25 @@ public class App extends PApplet implements NumberPlotterControllable {
         surface.setResizable(true);
 
         // init all possible sequences
-        integers = Integers.instance;
-        multiples = new Multiples(2);
-        powers = new Powers(2);
+        integers = (Integers)put(sequences, Integers.instance);
+        multiples = (Multiples)put(sequences, new Multiples(2));
+        powers = (Powers)put(sequences, new Powers(2));
 
         // init all possible curves
-        diamond = new Diamond(150, 2);
-        ulamSpiral = new UlamSpiral();
-        typewriter = new Typewriter(200);
-        triangle = new Triangle(2);
+        diamond = (Diamond)put(curves, new Diamond(150, 2));
+        ulamSpiral = (UlamSpiral)put(curves, new UlamSpiral());
+        typewriter = (Typewriter)put(curves, new Typewriter(200));
+        triangle = (Triangle)put(curves, new Triangle(2));
 
         // init all possible properties
-        isDivisibleBy = new Multiples(2);
-        isAnyPower = new Powers(2);
-        random = new RandomInt(2);
-        isPrime = IsPrime.instance;
+        isDivisibleBy = (Multiples)put(properties, new Multiples(2));
+        isAnyPower = (Powers)put(properties, new Powers(2));
+        random = (RandomInt)put(properties, new RandomInt(2));
+        isPrime = (IsPrime)put(properties, IsPrime.instance);
 
         // init all possible draw modes
-        toShape = new ToShape(ToShape.CIRCLE, 1, 1, 0xffffffff, 0, 200, 200, false);
-        toChar = new ToChar("x.", '?');
+        toShape = (ToShape)put(drawModes, new ToShape(ToShape.CIRCLE, 1, 1, 0xffffffff, 0, 200, 200, false));
+        toChar = (ToChar)put(drawModes, new ToChar("x.", '?'));
 
         // init current settings
         sequence = integers;
@@ -112,82 +118,66 @@ public class App extends PApplet implements NumberPlotterControllable {
 
         noLoop();
     }
+    
+    private Object put(HashMap map, Object value) {
+        map.put(value.getClass().getSimpleName(), value);
+        return value;
+    }
 
     /**************************
      ***** Event Handling *****
      **************************/
 
     public void setSequence(String name) {
-        switch (name) {
-        case "Integers":
-            sequence = integers;
-            break;
-        case "Multiples":
-            sequence = multiples;
-            break;
-        case "Powers":
-            sequence = powers;
-            break;
-        default:
-            System.err.println("Don't know any sequence by the name of " + name);
-            break;
+        IntSequence newSequence = sequences.get(name);
+        if (newSequence != null) {
+            if (newSequence != sequence) {
+                sequence = newSequence;
+                redraw();
+            }        
         }
-        redraw();
+        else {
+            System.err.println("Don't know any sequence by the name of " + name);
+        }
     }
 
     public void setCurve(String name) {
-        switch (name) {
-        case "Diamond":
-            curve = diamond;
-            break;
-        case "Ulam Spiral":
-            curve = ulamSpiral;
-            break;
-        case "Typewriter":
-            curve = typewriter;
-            break;
-        case "Triangle":
-            curve = triangle;
-            break;
-        default:
-            System.err.println("Don't know any curve by the name of " + name);
-            break;
+        Curve newCurve = curves.get(name);
+        if (newCurve != null) {
+            if (newCurve != curve) {
+                curve = newCurve;
+                redraw();
+            }            
         }
-        redraw();
+        else {
+            System.err.println("Don't know any curve by the name of " + name);
+        }
+        
     }
 
     public void setProperty(String name) {
-        switch (name) {
-        case "Divisible by":
-            property = isDivisibleBy;
-            break;
-        case "Any Power":
-            property = isAnyPower;
-            break;
-        case "Random":
-            property = random;
-            break;
-        case "Prime":
-            property = isPrime;
-            break;
-        default:
+        IntProperty newProperty = properties.get(name);
+        if (newProperty != null) {
+            if (newProperty != property) {
+                property = newProperty;
+                redraw();
+            }           
+        }
+        else {
             System.err.println("Don't know any property by the name of " + name);
         }
-        redraw();
     }
-
+    
     public void setDrawMode(String name) {
-        switch (name) {
-        case "Shape":
-            drawMode = toShape;
-            break;
-        case "Char":
-            drawMode = toChar;
-            break;
-        default:
+        DrawMode newDrawMode = drawModes.get(name);
+        if (newDrawMode != null) {
+            if (newDrawMode != drawMode) {
+                drawMode = newDrawMode;
+            }
+        }
+        else {
             System.err.println("Don't know any draw mode by the name of " + name);
         }
-        redraw();
     }
 
     public void setNumberOfPoints(float value) {
