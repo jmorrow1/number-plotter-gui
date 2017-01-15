@@ -14,9 +14,9 @@ import geom.Rect;
 import gui.GUI;
 import int_properties.IntProperty;
 import int_properties.IntSequence;
-import int_properties.IsDivisbleBy;
-import int_properties.IsInteger;
-import int_properties.IsPower;
+import int_properties.Multiples;
+import int_properties.Integers;
+import int_properties.Powers;
 import int_properties.IsPrime;
 import int_properties.RandomInt;
 import processing.core.PApplet;
@@ -29,7 +29,7 @@ import processing.core.PApplet;
  * @author James Morrow [jamesmorrowdesign.com]
  *
  */
-public class App extends PApplet {
+public class App extends PApplet implements NumberPlotterControllable {
 
     public static void main(String[] args) {
         PApplet.main("number_plotter_gui.App");
@@ -42,9 +42,9 @@ public class App extends PApplet {
     private DrawMode drawMode;
 
     // All possible sequences
-    private IsInteger integers;
-    private IsDivisbleBy multiples;
-    private IsPower powers;
+    private Integers integers;
+    private Multiples multiples;
+    private Powers powers;
 
     // All possible curves
     private Diamond diamond;
@@ -53,8 +53,8 @@ public class App extends PApplet {
     private Triangle triangle;
 
     // All possible properties
-    private IsDivisbleBy isDivisibleBy;
-    private IsPower isAnyPower;
+    private Multiples isDivisibleBy;
+    private Powers isAnyPower;
     private RandomInt random;
     private IsPrime isPrime;
 
@@ -82,9 +82,9 @@ public class App extends PApplet {
         surface.setResizable(true);
 
         // init all possible sequences
-        integers = IsInteger.instance;
-        multiples = new IsDivisbleBy(2);
-        powers = new IsPower(2);
+        integers = Integers.instance;
+        multiples = new Multiples(2);
+        powers = new Powers(2);
 
         // init all possible curves
         diamond = new Diamond(150, 2);
@@ -93,8 +93,8 @@ public class App extends PApplet {
         triangle = new Triangle(2);
 
         // init all possible properties
-        isDivisibleBy = new IsDivisbleBy(2);
-        isAnyPower = new IsPower(2);
+        isDivisibleBy = new Multiples(2);
+        isAnyPower = new Powers(2);
         random = new RandomInt(2);
         isPrime = IsPrime.instance;
 
@@ -129,7 +129,7 @@ public class App extends PApplet {
             sequence = powers;
             break;
         default:
-            System.out.println("Don't know any sequence by the name of " + name);
+            System.err.println("Don't know any sequence by the name of " + name);
             break;
         }
         redraw();
@@ -150,7 +150,7 @@ public class App extends PApplet {
             curve = triangle;
             break;
         default:
-            System.out.println("Don't know any curve by the name of " + name);
+            System.err.println("Don't know any curve by the name of " + name);
             break;
         }
         redraw();
@@ -171,7 +171,7 @@ public class App extends PApplet {
             property = isPrime;
             break;
         default:
-            System.out.println("Don't know any property by the name of " + name);
+            System.err.println("Don't know any property by the name of " + name);
         }
         redraw();
     }
@@ -185,7 +185,7 @@ public class App extends PApplet {
             drawMode = toChar;
             break;
         default:
-            System.out.println("Don't know any draw mode by the name of " + name);
+            System.err.println("Don't know any draw mode by the name of " + name);
         }
         redraw();
     }

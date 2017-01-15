@@ -2,6 +2,7 @@ package gui;
 
 import controllers.ControllerDisplay;
 import controllers.Toggle;
+import draw_modes.ToShape;
 import geom.Rect;
 import processing.core.PApplet;
 import processing.core.PGraphics;
@@ -17,14 +18,12 @@ public class Displays {
         public abstract void display(PGraphics g, Rect r);
     }
     
-    public static abstract class CurveDisplay {
+    public static abstract class CurveDisplay extends Display {
         protected int n;
         
         public CurveDisplay(int n) {
             this.n = n;
         }
-        
-        public abstract void display(PGraphics g, Rect r);
         
         public void setN(int n) {
             this.n = n;
@@ -34,6 +33,88 @@ public class Displays {
             return n;
         }
     }
+    
+    /**********************
+     ***** Draw Modes *****
+     **********************/
+    
+    public static class DrawShapeToggleDisplay implements ControllerDisplay<Toggle> {
+        private int mode;
+        
+        public DrawShapeToggleDisplay(int mode) {
+            this.mode = mode;
+        }
+        
+        public void display(PGraphics g, Toggle t) {
+            //background
+            if (t.isOff()) {
+                g.strokeWeight(2);
+                g.stroke(20);
+                g.fill(255);
+            }
+            else {
+                g.noStroke();
+                g.fill(20);
+            }
+            g.rectMode(CORNER);
+            g.rect(t.getX1(), t.getY1(), t.getWidth(), t.getHeight());
+            
+            //shape
+            g.noStroke();
+            g.fill(t.isOn() ? 255 : 20);
+            if (mode == ToShape.CIRCLE) {
+                g.ellipseMode(CENTER);
+                g.ellipse(t.getCenx(), t.getCeny(), t.getWidth()/3, t.getHeight()/3);
+            }
+            else if (mode == ToShape.SQUARE) {
+                g.rectMode(CENTER);
+                g.rect(t.getCenx(), t.getCeny(), t.getWidth()/3, t.getHeight()/3);
+            }
+        }
+        
+        public void setMode(int mode) {
+            this.mode = mode;
+        }
+    }
+    
+    /****************
+     ***** Text *****
+     ****************/
+    
+    public static class StringToggleDisplay implements ControllerDisplay<Toggle> {
+        private String s;
+        
+        public StringToggleDisplay(String s) {
+            this.s = s;
+        }
+        
+        @Override
+        public void display(PGraphics g, Toggle t) {
+            //background
+            if (t.isOff()) {
+                g.strokeWeight(2);
+                g.stroke(20);
+                g.fill(255);
+            }
+            else {
+                g.noStroke();
+                g.fill(20);
+            }
+            g.rectMode(CORNER);
+            g.rect(t.getX1(), t.getY1(), t.getWidth(), t.getHeight());
+            
+            //text
+            g.fill(t.isOn() ? g.color(255) : g.color(20));
+            g.rectMode(CORNER);
+            g.textAlign(CENTER, CENTER);
+            g.textSize(16);
+            g.text(s, t.getX1(), t.getY1(), t.getWidth(), t.getHeight());
+        }
+    }
+    
+    /******************
+     ***** Curves *****
+     ******************/
     
     public static class CurveToggleDisplay<T extends CurveDisplay> implements ControllerDisplay<Toggle> {
         protected T curveDisplay;
@@ -46,8 +127,22 @@ public class Displays {
         
         @Override
         public void display(PGraphics g, Toggle t) {
-            g.stroke(t.getColorInCurrentContext());
-            rect.set(t.getCenx(), t.getCeny(), t.getWidth(), t.getHeight(), CENTER);
+            //background
+            if (t.isOff()) {
+                g.strokeWeight(2);
+                g.stroke(20);
+                g.fill(255);
+            }
+            else {
+                g.noStroke();
+                g.fill(20);
+            }
+            g.rectMode(CORNER);
+            g.rect(t.getX1(), t.getY1(), t.getWidth(), t.getHeight());
+            
+            //curve
+            g.stroke(t.isOn() ? g.color(255) : g.color(20));
+            rect.set(t.getCenx(), t.getCeny(), 0.8f * t.getWidth(), 0.8f * t.getHeight(), CENTER);
             curveDisplay.display(g, rect);
         }
         
@@ -59,7 +154,7 @@ public class Displays {
             curveDisplay.setN(n);
         }
     }
-    
+
     public static class Diamond extends CurveDisplay {
         public Diamond(int n) {
             super(n);
@@ -178,6 +273,7 @@ public class Displays {
         @Override
         public void display(PGraphics g, Rect r) {
             g.noFill();
+            g.strokeWeight(2f);
 
             // g.rectMode(g.CENTER);
             // g.rect(r.getCenx(), r.getCeny(), r.getWidth(), r.getHeight());

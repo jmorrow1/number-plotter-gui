@@ -1,201 +1,177 @@
 package gui;
 
+import java.util.HashMap;
+
 import controllers.Controller;
+import controllers.ControllerDisplay;
 import controllers.ControllerListener;
 import controllers.ControllerUpdater;
 import controllers.Slider;
 import controllers.Toggle;
+import curves.Curve;
+import curves.Diamond;
+import curves.Triangle;
+import curves.Typewriter;
+import draw_modes.DrawMode;
+import draw_modes.ToChar;
+import draw_modes.ToShape;
 import geom.Rect;
 import gui.Displays.DiamondToggleDisplay;
+import gui.Displays.Display;
+import gui.Displays.DrawShapeToggleDisplay;
+import gui.Displays.StringToggleDisplay;
 import gui.Displays.TriangleToggleDisplay;
 import gui.Displays.TypewriterToggleDisplay;
+import gui.Displays.Ulam;
 import gui.Displays.UlamToggleDisplay;
-import number_plotter_gui.App;
+import int_properties.FactorCount;
+import int_properties.Fibonacci;
+import int_properties.IntProperty;
+import int_properties.IntSequence;
+import int_properties.Integers;
+import int_properties.IsPolygonal;
+import int_properties.IsPrime;
+import int_properties.Mod;
+import int_properties.Multiples;
+import int_properties.Powers;
+import int_properties.RandomInt;
+import number_plotter_gui.NumberPlotterControllable;
 import processing.core.PApplet;
+import processing.core.PGraphics;
 
-/**
- * The window that displays the GUI.
- * 
- * @author James Morrow [jamesmorrowdesign.com]
- *
- */
 public class GUI extends PApplet implements ControllerListener {
-
-    // window that displays the output of the system
-    private App app;
-
-    // positioning of controllers
-    private float x1, x2, dy;
-    private float[] y1s;
-
-    // text
-    private String[] categoryNames;
-
-    // controllers
     private ControllerUpdater updater;
-    private Toggle[] sequenceToggles, curveToggles, propertyToggles, drawModeToggles;
-
-    // style
-    private int controllerDefaultColor, controllerHoveredColor, toggleOnColor;
+    private HashMap<String, Toggle[]> toggles = new HashMap<String, Toggle[]>();
+    private Slider spacingSizeSlider, pointSizeSlider; 
+    private NumberPlotterControllable controllable;
     
-    public static void main(String[] args) {
-        PApplet.main("gui.GUI");
-    }
-    
-    public GUI() {}
-
-    public GUI(App app) {
-        this.app = app;
+    public GUI(NumberPlotterControllable controllable) {
+        this.controllable = controllable;
         PApplet.runSketch(new String[] { this.getClass().getName() }, this);
     }
-
-    @Override
+    
     public void settings() {
-        size(800, 600);
+//        size(800, 240);
+        size(800, 200);
     }
-
-    @Override
+    
     public void setup() {
-        controllerDefaultColor = color(100);
-        controllerHoveredColor = color(50);
-        toggleOnColor = color(0);
-
         updater = new ControllerUpdater(this);
         updater.setDefaultListener(this);
+        
+//        initSliders();
+//        initToggles(40);
+        initToggles(5);
+    }
+    
+    private void initSliders() {
+        spacingSizeSlider = new Slider(1f, 0.25f, 10f, updater, 1);
+        spacingSizeSlider.setRect(new Rect(460, 10, 130, 20, CORNER));
+        spacingSizeSlider.setDefaultColor(color(20));
+        spacingSizeSlider.setHoveredColor(color(20));
 
-        x1 = 20;
-        x2 = 250;
-        dy = 80;
-        y1s = scanAdd(20, dy, 7);
-        categoryNames = new String[] { "Sequence:", "Curve:", "Property:", "Draw mode:", "Number of points:",
-                "Spacing between points:", "Point size:" };
-
-        // Sequences
-        int sw = 80, sh = 40;
-        int sdx = 10;
-        Toggle s1 = new Toggle(new Rect(x2, y1s[0], sw, sh, CORNER), updater, 1);
-        s1.setGroupName("Sequence");
-        s1.setName("Integers");
-        s1.setTextAlign(LEFT, TOP);
-        Toggle s2 = new Toggle(new Rect(x2 + sw + sdx, y1s[0], sw, sh, CORNER), updater, 1);
-        s2.setGroupName("Sequence");
-        s2.setName("Multiples");
-        s2.setTextAlign(LEFT, TOP);
-        Toggle s3 = new Toggle(new Rect(x2 + 2 * (sw + sdx), y1s[0], sw, sh, CORNER), updater, 1);
-        s3.setGroupName("Sequence");
-        s3.setName("Powers");
-        s3.setTextAlign(LEFT, TOP);
-        sequenceToggles = new Toggle[] { s1, s2, s3 };
-
-        // Curves
-        int lns = 7;
-        int csqrt = 50;
-        int cdx = 10;
-        Toggle c1 = new Toggle(new Rect(x2, y1s[1], csqrt, csqrt, CORNER), updater, 1);
-        c1.setDisplay(new DiamondToggleDisplay(lns));
-        c1.setGroupName("Curve");
-        c1.setName("Diamond");
-        Toggle c2 = new Toggle(new Rect(x2 + csqrt + cdx, y1s[1], csqrt, csqrt, CORNER), updater, 1);
-        c2.setDisplay(new UlamToggleDisplay(lns));
-        c2.setGroupName("Curve");
-        c2.setName("Ulam Spiral");
-        Toggle c3 = new Toggle(new Rect(x2 + 2 * (csqrt + cdx), y1s[1], csqrt, csqrt, CORNER), updater, 1);
-        c3.setDisplay(new TypewriterToggleDisplay(lns));
-        c3.setGroupName("Curve");
-        c3.setName("Typewriter");
-        Toggle c4 = new Toggle(new Rect(x2 + 3 * (csqrt + cdx), y1s[1], csqrt, csqrt, CORNER), updater, 1);
-        c4.setDisplay(new TriangleToggleDisplay(lns));
-        c4.setGroupName("Curve");
-        c4.setName("Triangle");
-        curveToggles = new Toggle[] { c1, c2, c3, c4 };
-
-        // TODO Properties
-        int pw = 120, ph = 40;
-        int pdx = 10;
-        Toggle p1 = new Toggle(new Rect(x2, y1s[2], pw, ph, CORNER), updater, 1);
-        p1.setGroupName("Property");
-        p1.setName("Divisible by");
-        Toggle p2 = new Toggle(new Rect(x2 + pw + pdx, y1s[2], pw, ph, CORNER), updater, 1);
-        p2.setGroupName("Property");
-        p2.setName("Any Power");
-        Toggle p3 = new Toggle(new Rect(x2 + 2 * (pw + pdx), y1s[2], pw, ph, CORNER), updater, 1);
-        p3.setGroupName("Property");
-        p3.setName("Random");
-        Toggle p4 = new Toggle(new Rect(x2 + 3 * (pw + pdx), y1s[2], pw, ph, CORNER), updater, 1);
-        p4.setGroupName("Property");
-        p4.setName("Prime");
-        propertyToggles = new Toggle[] { p1, p2, p3, p4 };
-
-        // TODO Draw modes
-        int dw = 70, dh = 40;
-        int ddx = 10;
-        Toggle d1 = new Toggle(new Rect(x2, y1s[3], dw, dh, CORNER), updater, 1);
-        d1.setGroupName("Draw Mode");
-        d1.setName("Shape");
-        Toggle d2 = new Toggle(new Rect(x2 + dw + ddx, y1s[3], dw, dh, CORNER), updater, 1);
-        d2.setGroupName("Draw Mode");
-        d2.setName("Char");
-        drawModeToggles = new Toggle[] { d1, d2 };
-
-        // TODO Number of Sample Points
-        Slider numSamplePts = new Slider(1000, 1000000, updater, 1);
-        numSamplePts.setRect(new Rect(x2, y1s[4] + 2, 200, 20, CORNER));
-        numSamplePts.setName("Number of points");
-
-        // TODO Spacing between Samples (temp)
-        Slider spacingBetweenSamples = new Slider(1f, 0.25f, 10f, updater, 1);
-        spacingBetweenSamples.setRect(new Rect(x2, y1s[5] + 2, 200, 20, CORNER));
-        spacingBetweenSamples.setTick(0.25f);
-        spacingBetweenSamples.setName("Cell size");
-
-        // TODO Point Size (temp)
-        Slider pointSize = new Slider(1f, 0.25f, 5f, updater, 1);
-        pointSize.setRect(new Rect(x2, y1s[6] + 2, 200, 20, CORNER));
-        pointSize.setTick(0.25f);
-        pointSize.setName("Point size");
-
-        for (int i = 0; i < updater.controllerCount(); i++) {
-            Controller c = updater.getController(i);
-            c.setDefaultColor(controllerDefaultColor);
-            c.setHoveredColor(controllerHoveredColor);
-            if (c instanceof Toggle) {
-                Toggle t = (Toggle) c;
-                t.setOnColor(toggleOnColor);
+        pointSizeSlider = new Slider(1f, 0.25f, 5f, updater, 1);
+        pointSizeSlider.setRect(new Rect(635, 10, 130, 20, CORNER));
+        pointSizeSlider.setDefaultColor(color(20));
+        pointSizeSlider.setHoveredColor(color(20));
+    }
+    
+    private void initToggles(float startY) {
+        Display placeholder = new Display() {
+            public void display(PGraphics g, Rect r) {
+                g.stroke(0);
+                r.draw(g);
             }
+        };
+        
+        float xMargin = 5;
+        float yMargin = 10;
+        float w1 = 40;
+        float w2 = w1+w1+xMargin;
+        float x = xMargin;
+        float y = startY;
+        float h = 40;
+        float dy = h + yMargin;
+    
+        toggles.put(Curve.class.getSimpleName(), new Toggle[] {
+            createToggle(1, new DiamondToggleDisplay(5), new Rect(x, y, w1, h, CORNER), Curve.class.getSimpleName(), Diamond.class.getSimpleName()),
+            createToggle(1, new TypewriterToggleDisplay(5), new Rect(x += w1+xMargin, y, w1, h, CORNER), Curve.class.getSimpleName(), Typewriter.class.getSimpleName()),
+            createToggle(1, new UlamToggleDisplay(5), new Rect(x += w1+xMargin, y, w1, h, CORNER), Curve.class.getSimpleName(), Ulam.class.getSimpleName()),
+            createToggle(1, new TriangleToggleDisplay(5), new Rect(x += w1+xMargin, y, w1, h, CORNER), Curve.class.getSimpleName(), Triangle.class.getSimpleName())
+        });
+        
+        x = xMargin;
+        y += dy;
+        
+        toggles.put(IntSequence.class.getSimpleName(), new Toggle[] {
+            createToggle(1, new StringToggleDisplay(intSequenceToString(new int[] {1,2,3})), new Rect(x, y, w2, h, CORNER), IntSequence.class.getSimpleName(), Integers.class.getSimpleName()),
+            createToggle(1, new StringToggleDisplay(intSequenceToString(new int[] {2,4,6})), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntSequence.class.getSimpleName(), Multiples.class.getSimpleName()),
+            createToggle(1, new StringToggleDisplay(intSequenceToString(new int[] {1,2,4})), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntSequence.class.getSimpleName(), Powers.class.getSimpleName()),
+            createToggle(1, new StringToggleDisplay(intSequenceToString(new int[] {1,1,2})), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntSequence.class.getSimpleName(), Fibonacci.class.getSimpleName())
+        });
+        
+        x = xMargin;
+        y += dy;
+        
+        toggles.put(IntProperty.class.getSimpleName(), new Toggle[] {
+            createToggle(1, new StringToggleDisplay("n^m = 0"), new Rect(x, y, w2, h, CORNER), IntProperty.class.getSimpleName(), Powers.class.getSimpleName()),
+            createToggle(1, new StringToggleDisplay("isPrime(n)"), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntProperty.class.getSimpleName(), IsPrime.class.getSimpleName()),
+            createToggle(1, new StringToggleDisplay("rand()"), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntProperty.class.getSimpleName(), RandomInt.class.getSimpleName()),
+            createToggle(1, new StringToggleDisplay("n/5 = 0"), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntProperty.class.getSimpleName(), Multiples.class.getSimpleName()),
+            createToggle(1, new StringToggleDisplay("isFib(n)"), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntProperty.class.getSimpleName(), Fibonacci.class.getSimpleName()),
+            createToggle(1, new StringToggleDisplay("isPoly(n)"), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntProperty.class.getSimpleName(), IsPolygonal.class.getSimpleName()),
+            createToggle(1, new StringToggleDisplay("factors(n)"), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntProperty.class.getSimpleName(), FactorCount.class.getSimpleName()),
+            createToggle(1, new StringToggleDisplay("n%m"), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntProperty.class.getSimpleName(), Mod.class.getSimpleName())
+        });
+        
+        x = xMargin;
+        y += dy;
+        
+        toggles.put(DrawMode.class.getSimpleName(), new Toggle[] {
+            createToggle(1, new DrawShapeToggleDisplay(ToShape.SQUARE), new Rect(x, y, w1, h, CORNER), DrawMode.class.getSimpleName(), ToShape.class.getSimpleName()),
+            createToggle(1, new StringToggleDisplay("a"), new Rect(x += w1+xMargin, y, w1, h, CORNER), DrawMode.class.getSimpleName(), ToChar.class.getSimpleName())
+        });
+    }
+    
+    private String intSequenceToString(int[] ns) {
+        String s = "";
+        for (int i=0; i<ns.length; i++) {
+            s += ns[i] + ", ";
         }
+        s += "...";
+        return s;
+    }
+    
+    private Toggle createToggle(float priority, ControllerDisplay display, Rect rect, String groupName, String name) {
+        Toggle t = new Toggle(updater, priority);
+        t.setDisplay(display);
+        t.setRect(rect);
+        t.setGroupName(groupName);
+        return t;
     }
 
-    private static float[] scanAdd(float start, float dx, int n) {
-        float x = start;
-        float[] ys = new float[n];
-        for (int i = 0; i < n; i++) {
-            ys[i] = x;
-            x += dx;
-        }
-        return ys;
-    }
-
-    @Override
     public void draw() {
         background(255);
         updater.draw(g);
-        drawCategoryNames(18, 20);
     }
 
-    private void drawCategoryNames(float textSize, float x1) {
-        int i = 0;
-        int j = 0;
-        fill(0);
-        textSize(textSize);
-        textAlign(RIGHT, TOP);
-        rectMode(CORNERS);
-        while (i < categoryNames.length && j < y1s.length) {
-            text(categoryNames[i], x1, y1s[i], x2 - 20, y1s[i] + dy - 20);
-            i++;
-            j++;
+    @Override
+    public void controllerEvent(Controller c) {
+        if (c instanceof Toggle) {
+            toggleEvent((Toggle)c);
         }
     }
-
+    
+    public void toggleEvent(Toggle t) {
+        Toggle[] ts = toggles.get(t.getGroupName());
+        if (ts != null) {
+            for (int i=0; i<ts.length; i++) {
+                ts[i].setState(ts[i] == t);
+                controllable.setVariable(t.getGroupName(), t.getName());
+            }
+        }
+    }
+    
     @Override
     public void mousePressed() {
         updater.mousePressed(this);
@@ -214,61 +190,5 @@ public class GUI extends PApplet implements ControllerListener {
     @Override
     public void mouseDragged() {
         updater.mouseDragged(this);
-    }
-
-    @Override
-    public void controllerEvent(Controller c) {
-        switch (c.getName()) {
-        case "Number of points":
-            Slider a = (Slider) c;
-            app.setNumberOfPoints(a.getValue());
-            break;
-        case "Cell size":
-            Slider b = (Slider) c;
-            app.setCellSize(b.getValue());
-            break;
-        case "Point size":
-            Slider d = (Slider) c;
-            app.setCellSize(d.getValue());
-            break;
-        default:
-            Toggle t = (Toggle) c;
-            switch (c.getGroupName()) {
-            case "Curve":
-                app.setCurve(c.getName());
-                turnOffToggles(curveToggles, t);
-                break;
-            case "Sequence":
-                app.setSequence(c.getName());
-                turnOffToggles(sequenceToggles, t);
-                break;
-            case "Property":
-                app.setProperty(c.getName());
-                turnOffToggles(propertyToggles, t);
-                break;
-            case "Draw Mode":
-                app.setDrawMode(c.getName());
-                turnOffToggles(drawModeToggles, t);
-                break;
-            default:
-                System.out.println("Don't know a controller with this name: " + c.getName() + " or this group name: "
-                        + c.getGroupName());
-            }
-        }
-    }
-
-    /**
-     * Turns off all the toggles (sets their states to off) except for one
-     * toggle.
-     * 
-     * @param toggles The toggles
-     * @param exemption The toggle not to turn off
-     */
-    private static void turnOffToggles(Toggle[] toggles, Toggle exemption) {
-        for (int i = 0; i < toggles.length; i++) {
-            if (toggles[i] != exemption) {
-                toggles[i].setStateSilently(0);
-            }
-        }
     }
 }
