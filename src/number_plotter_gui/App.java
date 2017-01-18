@@ -5,6 +5,7 @@ import java.util.HashMap;
 import curves.Curve;
 import curves.Diamond;
 import curves.Point;
+import curves.SacksSpiral;
 import curves.Triangle;
 import curves.Typewriter;
 import curves.UlamSpiral;
@@ -18,8 +19,8 @@ import int_properties.IntProperty;
 import int_properties.IntSequence;
 import int_properties.Integers;
 import int_properties.IsPolygonal;
-import int_properties.IsPrime;
 import int_properties.IsPower;
+import int_properties.IsPrime;
 import int_properties.Mod;
 import int_properties.Multiples;
 import int_properties.Powers;
@@ -58,6 +59,7 @@ public class App extends PApplet implements NumberPlotterControllable {
     private UlamSpiral ulamSpiral;
     private Typewriter typewriter;
     private Triangle triangle;
+    private SacksSpiral sacksSpiral;
 
     // All possible properties
     private HashMap<String, IntProperty> properties = new HashMap<String, IntProperty>();
@@ -103,6 +105,7 @@ public class App extends PApplet implements NumberPlotterControllable {
         ulamSpiral = (UlamSpiral)put(curves, new UlamSpiral());
         typewriter = (Typewriter)put(curves, new Typewriter(200));
         triangle = (Triangle)put(curves, new Triangle(2));
+        sacksSpiral = (SacksSpiral)put(curves, new SacksSpiral());
 
         // init all possible properties
         isDivisibleBy = (Multiples)put(properties, new Multiples(2));

@@ -154,6 +154,44 @@ public class Displays {
             curveDisplay.setN(n);
         }
     }
+    
+    public static class Sacks extends CurveDisplay {
+
+        public Sacks(int n) {
+            super(n);
+        }
+
+        @Override
+        public void display(PGraphics g, Rect r) {
+            g.strokeWeight(2);
+            g.noFill();
+            
+            float radius = 0.5f * PApplet.min(r.getWidth(), r.getHeight());
+            
+            spiral(g, r.getCenx(), r.getCeny(), radius, 3);
+            
+        }
+        
+        private void spiral(PGraphics g, float x, float y, float radius, float loopCount) {
+            int n = 100;
+
+            float t = 0;
+            float dt = 1f / n;
+            
+            g.beginShape();
+            for (int i=0; i<n+1; i++) {
+                float r = radius * quadEaseOut(t);
+                float phi = loopCount * PApplet.TWO_PI * quadEaseOut(t);
+                g.vertex(x + r * PApplet.cos(phi), y + r * PApplet.sin(phi));
+                t += dt;
+            }
+            g.endShape();
+        }
+        
+        private static float quadEaseOut(float t) {
+            return -t*(t-2);
+        }
+    }
 
     public static class Diamond extends CurveDisplay {
         public Diamond(int n) {
@@ -314,6 +352,12 @@ public class Displays {
                 len += dLen;
                 y += dy;
             }
+        }
+    }
+    
+    public static class SacksToggleDisplay extends CurveToggleDisplay<Sacks> {
+        public SacksToggleDisplay(int n) {
+            super(new Sacks(n));
         }
     }
     

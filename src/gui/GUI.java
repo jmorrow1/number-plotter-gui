@@ -10,6 +10,7 @@ import controllers.Slider;
 import controllers.Toggle;
 import curves.Curve;
 import curves.Diamond;
+import curves.SacksSpiral;
 import curves.Triangle;
 import curves.Typewriter;
 import curves.UlamSpiral;
@@ -21,6 +22,7 @@ import geom.Rect;
 import gui.Displays.DiamondToggleDisplay;
 import gui.Displays.Display;
 import gui.Displays.DrawShapeToggleDisplay;
+import gui.Displays.SacksToggleDisplay;
 import gui.Displays.StringToggleDisplay;
 import gui.Displays.TriangleToggleDisplay;
 import gui.Displays.TypewriterToggleDisplay;
@@ -31,8 +33,8 @@ import int_properties.IntProperty;
 import int_properties.IntSequence;
 import int_properties.Integers;
 import int_properties.IsPolygonal;
-import int_properties.IsPrime;
 import int_properties.IsPower;
+import int_properties.IsPrime;
 import int_properties.Mod;
 import int_properties.Multiples;
 import int_properties.Powers;
@@ -99,7 +101,8 @@ public class GUI extends PApplet implements ControllerListener {
             createToggle(1, new DiamondToggleDisplay(5), new Rect(x, y, w1, h, CORNER), Curve.class.getSimpleName(), Diamond.class.getSimpleName()),
             createToggle(1, new TypewriterToggleDisplay(5), new Rect(x += w1+xMargin, y, w1, h, CORNER), Curve.class.getSimpleName(), Typewriter.class.getSimpleName()),
             createToggle(1, new UlamToggleDisplay(5), new Rect(x += w1+xMargin, y, w1, h, CORNER), Curve.class.getSimpleName(), UlamSpiral.class.getSimpleName()),
-            createToggle(1, new TriangleToggleDisplay(5), new Rect(x += w1+xMargin, y, w1, h, CORNER), Curve.class.getSimpleName(), Triangle.class.getSimpleName())
+            createToggle(1, new TriangleToggleDisplay(5), new Rect(x += w1+xMargin, y, w1, h, CORNER), Curve.class.getSimpleName(), Triangle.class.getSimpleName()),
+            createToggle(1, new SacksToggleDisplay(5), new Rect(x += w1+xMargin, y, w1, h, CORNER), Curve.class.getSimpleName(), SacksSpiral.class.getSimpleName()),
         });
         
         x = xMargin;
