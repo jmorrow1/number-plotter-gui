@@ -17,7 +17,10 @@ import gui.GUI;
 import int_properties.IntProperty;
 import int_properties.IntSequence;
 import int_properties.Integers;
+import int_properties.IsPolygonal;
 import int_properties.IsPrime;
+import int_properties.IsPower;
+import int_properties.Mod;
 import int_properties.Multiples;
 import int_properties.Powers;
 import int_properties.RandomInt;
@@ -62,6 +65,9 @@ public class App extends PApplet implements NumberPlotterControllable {
     private Powers isAnyPower;
     private RandomInt random;
     private IsPrime isPrime;
+    private IsPolygonal isPoly;
+    private Mod mod;
+    private IsPower isSquare;
 
     // All possible draw modes
     private HashMap<String, DrawMode> drawModes = new HashMap<String, DrawMode>();
@@ -70,7 +76,7 @@ public class App extends PApplet implements NumberPlotterControllable {
     private ToShape toShape;
 
     // points
-    private Point[] pts = new Point[40000];
+    private Point[] pts = new Point[80000];
     private float cellSize = 3;
     private float numberSize = 4;
 
@@ -103,6 +109,9 @@ public class App extends PApplet implements NumberPlotterControllable {
         isAnyPower = (Powers)put(properties, new Powers(2));
         random = (RandomInt)put(properties, new RandomInt(2));
         isPrime = (IsPrime)put(properties, IsPrime.instance);
+        isPoly = (IsPolygonal)put(properties, new IsPolygonal(5));
+        mod = (Mod)put(properties, new Mod(5)); 
+        isSquare = (IsPower)put(properties, IsPower.instance);
 
         // init all possible draw modes
         toShape = (ToShape)put(drawModes, new ToShape(ToShape.CIRCLE, 1, 1, 0xffffffff, 0, 200, 200, false));
@@ -124,6 +133,45 @@ public class App extends PApplet implements NumberPlotterControllable {
         return value;
     }
 
+    /****************
+     ***** Draw *****
+     ****************/
+
+    @Override
+    public void draw() {
+        background(255);
+
+        pushMatrix();
+        curve.enumerate(pts);
+
+        Rect bounds = bounds(pts);
+        bounds.scale(cellSize, cellSize);
+        float tx = 0.5f * (width - bounds.getWidth()) - bounds.getX1();
+        float ty = 0.5f * (height - bounds.getHeight()) - bounds.getY1();
+        translate(tx, ty);
+        drawPoints();
+        popMatrix();
+
+        // System.out.println(frameCount);
+    }
+
+    private void drawPoints() {
+        for (int n = 0; n < pts.length; n++) {
+            if (pts[n] != null) {
+                long y = sequence.nth(n + 1);
+                drawMode.draw(n, property.evaluate(y), property.numPossibleStates() - 1,
+                        cellSize * pts[n].x, cellSize * pts[n].y, numberSize, g);
+            }
+        }
+    }
+
+    @Override
+    public void keyPressed() {
+        if (key == 's' || key == 'S') {
+            save("C://Users//James//Desktop//" + frameCount + ".png");
+        }
+    }
+    
     /**************************
      ***** Event Handling *****
      **************************/
@@ -192,46 +240,6 @@ public class App extends PApplet implements NumberPlotterControllable {
     public void setPointSize(float value) {
         numberSize = value;
         redraw();
-    }
-
-    /****************
-     ***** Draw *****
-     ****************/
-
-    @Override
-    public void draw() {
-        background(255);
-
-        pushMatrix();
-        curve.enumerate(pts);
-
-        Rect bounds = bounds(pts);
-        bounds.scale(cellSize, cellSize);
-        float tx = (width - bounds.getWidth()) / 2 - bounds.getX1();
-        float ty = (height - bounds.getHeight()) / 2 - bounds.getY1();
-        translate(tx, ty);
-
-        drawPoints();
-        popMatrix();
-
-        // System.out.println(frameCount);
-    }
-
-    private void drawPoints() {
-        for (int n = 0; n < pts.length; n++) {
-            if (pts[n] != null) {
-                long y = sequence.nth(n + 1);
-                drawMode.draw(n, property.evaluate(y), property.numPossibleStates() - 1, cellSize * pts[n].x,
-                        cellSize * pts[n].y, numberSize, g);
-            }
-        }
-    }
-
-    @Override
-    public void keyPressed() {
-        if (key == 's' || key == 'S') {
-            save("C://Users//James//Desktop//" + frameCount + ".png");
-        }
     }
 
     /**************************

@@ -15,6 +15,7 @@ import curves.Typewriter;
 import curves.UlamSpiral;
 import draw_modes.DrawMode;
 import draw_modes.ToChar;
+import draw_modes.ToImage;
 import draw_modes.ToShape;
 import geom.Rect;
 import gui.Displays.DiamondToggleDisplay;
@@ -31,6 +32,7 @@ import int_properties.IntSequence;
 import int_properties.Integers;
 import int_properties.IsPolygonal;
 import int_properties.IsPrime;
+import int_properties.IsPower;
 import int_properties.Mod;
 import int_properties.Multiples;
 import int_properties.Powers;
@@ -118,10 +120,11 @@ public class GUI extends PApplet implements ControllerListener {
             createToggle(1, new StringToggleDisplay("isPrime(n)"), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntProperty.class.getSimpleName(), IsPrime.class.getSimpleName()),
             createToggle(1, new StringToggleDisplay("rand()"), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntProperty.class.getSimpleName(), RandomInt.class.getSimpleName()),
             createToggle(1, new StringToggleDisplay("n/5 = 0"), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntProperty.class.getSimpleName(), Multiples.class.getSimpleName()),
-            createToggle(1, new StringToggleDisplay("isFib(n)"), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntProperty.class.getSimpleName(), Fibonacci.class.getSimpleName()),
             createToggle(1, new StringToggleDisplay("isPoly(n)"), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntProperty.class.getSimpleName(), IsPolygonal.class.getSimpleName()),
+            createToggle(1, new StringToggleDisplay("n%m"), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntProperty.class.getSimpleName(), Mod.class.getSimpleName()),
+            createToggle(1, new StringToggleDisplay("isPower(n)"), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntProperty.class.getSimpleName(), IsPower.class.getSimpleName()),
             createToggle(1, new StringToggleDisplay("factors(n)"), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntProperty.class.getSimpleName(), FactorCount.class.getSimpleName()),
-            createToggle(1, new StringToggleDisplay("n%m"), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntProperty.class.getSimpleName(), Mod.class.getSimpleName())
+            createToggle(1, new StringToggleDisplay("isFib(n)"), new Rect(x += w2+xMargin, y, w2, h, CORNER), IntProperty.class.getSimpleName(), Fibonacci.class.getSimpleName())
         });
         
         x = xMargin;
@@ -129,7 +132,8 @@ public class GUI extends PApplet implements ControllerListener {
         
         toggles.put(DrawMode.class.getSimpleName(), new Toggle[] {
             createToggle(1, new DrawShapeToggleDisplay(ToShape.SQUARE), new Rect(x, y, w1, h, CORNER), DrawMode.class.getSimpleName(), ToShape.class.getSimpleName()),
-            createToggle(1, new StringToggleDisplay("a"), new Rect(x += w1+xMargin, y, w1, h, CORNER), DrawMode.class.getSimpleName(), ToChar.class.getSimpleName())
+            createToggle(1, new StringToggleDisplay("a"), new Rect(x += w1+xMargin, y, w1, h, CORNER), DrawMode.class.getSimpleName(), ToChar.class.getSimpleName()),
+            createToggle(1, new StringToggleDisplay("img"), new Rect(x += w1+xMargin, y, w1, h, CORNER), DrawMode.class.getSimpleName(), ToImage.class.getSimpleName())
         });
     }
     
