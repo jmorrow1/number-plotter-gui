@@ -1,5 +1,6 @@
 package gui;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import controllers.Controller;
@@ -23,6 +24,7 @@ import gui.Displays.DiamondToggleDisplay;
 import gui.Displays.Display;
 import gui.Displays.DrawShapeToggleDisplay;
 import gui.Displays.SacksToggleDisplay;
+import gui.Displays.StringDisplay;
 import gui.Displays.StringToggleDisplay;
 import gui.Displays.TriangleToggleDisplay;
 import gui.Displays.TypewriterToggleDisplay;
@@ -43,10 +45,21 @@ import number_plotter_gui.NumberPlotterControllable;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 
+/**
+ * 
+ * @author James Morrow [jamesmorrowdesign.com]
+ *
+ */
 public class GUI extends PApplet implements ControllerListener {
+    //controllers
     private ControllerUpdater updater;
     private HashMap<String, Toggle[]> toggles = new HashMap<String, Toggle[]>();
     private Slider spacingSizeSlider, pointSizeSlider; 
+    
+    //other drawables
+    private ArrayList<DisplayBox> displayBoxes = new ArrayList<DisplayBox>();
+    
+    //controllable
     private NumberPlotterControllable controllable;
     
     public GUI(NumberPlotterControllable controllable) {
@@ -95,7 +108,11 @@ public class GUI extends PApplet implements ControllerListener {
         float x = xMargin;
         float y = startY;
         float h = 40;
-        float dy = h + yMargin;
+        float dy = h + yMargin; 
+        float textWidth = 120;
+        
+        displayBoxes.add(new DisplayBox(new StringDisplay("Curve"), new Rect(x, y, w2, h, CORNER)));
+        x += w2+xMargin;
     
         toggles.put(Curve.class.getSimpleName(), new Toggle[] {
             createToggle(1, new DiamondToggleDisplay(5), new Rect(x, y, w1, h, CORNER), Curve.class.getSimpleName(), Diamond.class.getSimpleName()),
@@ -104,9 +121,12 @@ public class GUI extends PApplet implements ControllerListener {
             createToggle(1, new TriangleToggleDisplay(5), new Rect(x += w1+xMargin, y, w1, h, CORNER), Curve.class.getSimpleName(), Triangle.class.getSimpleName()),
             createToggle(1, new SacksToggleDisplay(5), new Rect(x += w1+xMargin, y, w1, h, CORNER), Curve.class.getSimpleName(), SacksSpiral.class.getSimpleName()),
         });
-        
+
         x = xMargin;
         y += dy;
+        
+        displayBoxes.add(new DisplayBox(new StringDisplay("Sequence"), new Rect(x, y, w2, h, CORNER)));
+        x += w2+xMargin;
         
         toggles.put(IntSequence.class.getSimpleName(), new Toggle[] {
             createToggle(1, new StringToggleDisplay(intSequenceToString(new int[] {1,2,3})), new Rect(x, y, w2, h, CORNER), IntSequence.class.getSimpleName(), Integers.class.getSimpleName()),
@@ -117,6 +137,9 @@ public class GUI extends PApplet implements ControllerListener {
         
         x = xMargin;
         y += dy;
+        
+        displayBoxes.add(new DisplayBox(new StringDisplay("Property"), new Rect(x, y, w2, h, CORNER)));
+        x += w2+xMargin;
         
         toggles.put(IntProperty.class.getSimpleName(), new Toggle[] {
             createToggle(1, new StringToggleDisplay("n^m = 0"), new Rect(x, y, w2, h, CORNER), IntProperty.class.getSimpleName(), Powers.class.getSimpleName()),
@@ -132,6 +155,9 @@ public class GUI extends PApplet implements ControllerListener {
         
         x = xMargin;
         y += dy;
+        
+        displayBoxes.add(new DisplayBox(new StringDisplay("Draw Mode"), new Rect(x, y, w2, h, CORNER)));
+        x += w2+xMargin;
         
         toggles.put(DrawMode.class.getSimpleName(), new Toggle[] {
             createToggle(1, new DrawShapeToggleDisplay(ToShape.SQUARE), new Rect(x, y, w1, h, CORNER), DrawMode.class.getSimpleName(), ToShape.class.getSimpleName()),
@@ -161,6 +187,9 @@ public class GUI extends PApplet implements ControllerListener {
     public void draw() {
         background(255);
         updater.draw(g);
+        for (DisplayBox box : displayBoxes) {
+            box.draw(g);
+        }
     }
 
     @Override
@@ -198,5 +227,19 @@ public class GUI extends PApplet implements ControllerListener {
     @Override
     public void mouseDragged() {
         updater.mouseDragged(this);
+    }
+    
+    public static class DisplayBox {
+        public Display display;
+        public Rect box;
+        
+        public DisplayBox(Display display, Rect box) {
+            this.display = display;
+            this.box = box;
+        }
+        
+        public void draw(PGraphics g) {
+            display.display(g, box);
+        }
     }
 }

@@ -81,6 +81,10 @@ public class App extends PApplet implements NumberPlotterControllable {
     private Point[] pts = new Point[80000];
     private float cellSize = 3;
     private float numberSize = 4;
+    
+    //drawing
+    private int prevWidth, prevHeight;
+    private boolean drawData = true;
 
     /*****************
      ***** Setup *****
@@ -125,10 +129,11 @@ public class App extends PApplet implements NumberPlotterControllable {
         curve = diamond;
         property = isPrime;
         drawMode = toShape;
+        
+        prevWidth = width;
+        prevHeight = height;
 
         new GUI(this);
-
-        noLoop();
     }
     
     private Object put(HashMap map, Object value) {
@@ -142,20 +147,28 @@ public class App extends PApplet implements NumberPlotterControllable {
 
     @Override
     public void draw() {
-        background(255);
+        if (width != prevWidth || height != prevHeight) {
+            windowResized();
+            prevWidth = width;
+            prevHeight = height;
+        }
+        
+        if (drawData) {
+            background(255);
 
-        pushMatrix();
-        curve.enumerate(pts);
+            pushMatrix();
+            curve.enumerate(pts);
 
-        Rect bounds = bounds(pts);
-        bounds.scale(cellSize, cellSize);
-        float tx = 0.5f * (width - bounds.getWidth()) - bounds.getX1();
-        float ty = 0.5f * (height - bounds.getHeight()) - bounds.getY1();
-        translate(tx, ty);
-        drawPoints();
-        popMatrix();
-
-        // System.out.println(frameCount);
+            Rect bounds = bounds(pts);
+            bounds.scale(cellSize, cellSize);
+            float tx = 0.5f * (width - bounds.getWidth()) - bounds.getX1();
+            float ty = 0.5f * (height - bounds.getHeight()) - bounds.getY1();
+            translate(tx, ty);
+            drawPoints();
+            popMatrix();
+            
+            drawData = false;
+        }
     }
 
     private void drawPoints() {
@@ -168,23 +181,16 @@ public class App extends PApplet implements NumberPlotterControllable {
         }
     }
 
-    @Override
-    public void keyPressed() {
-        if (key == 's' || key == 'S') {
-            save("C://Users//James//Desktop//" + frameCount + ".png");
-        }
-    }
-    
-    /**************************
-     ***** Event Handling *****
-     **************************/
+    /***********************************
+     ***** Number Plotter Controls *****
+     ***********************************/
 
     public void setSequence(String name) {
         IntSequence newSequence = sequences.get(name);
         if (newSequence != null) {
             if (newSequence != sequence) {
                 sequence = newSequence;
-                redraw();
+                drawData = true;
             }        
         }
         else {
@@ -197,7 +203,7 @@ public class App extends PApplet implements NumberPlotterControllable {
         if (newCurve != null) {
             if (newCurve != curve) {
                 curve = newCurve;
-                redraw();
+                drawData = true;
             }            
         }
         else {
@@ -211,7 +217,7 @@ public class App extends PApplet implements NumberPlotterControllable {
         if (newProperty != null) {
             if (newProperty != property) {
                 property = newProperty;
-                redraw();
+                drawData = true;
             }           
         }
         else {
@@ -237,14 +243,34 @@ public class App extends PApplet implements NumberPlotterControllable {
 
     public void setCellSize(float value) {
         cellSize = value;
-        redraw();
+        drawData = true;
     }
 
     public void setPointSize(float value) {
         numberSize = value;
-        redraw();
+        drawData = true;
     }
 
+    /******************
+     ***** Events *****
+     ******************/
+    
+    @Override
+    public void keyPressed() {
+        if (key == 's' || key == 'S') {
+            save("C://Users//James//Desktop//" + frameCount + ".png");
+        }
+    }
+    
+    @Override
+    public void mouseMoved() {
+        
+    }
+    
+    public void windowResized() {
+        drawData = true;
+    }
+    
     /**************************
      ***** Helper Methods *****
      **************************/

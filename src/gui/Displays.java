@@ -5,6 +5,7 @@ import controllers.Toggle;
 import draw_modes.ToShape;
 import geom.Rect;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PVector;
 
@@ -14,11 +15,11 @@ import processing.core.PVector;
  *
  */
 public class Displays {
-    public static abstract class Display {
+    public static abstract interface Display extends PConstants {
         public abstract void display(PGraphics g, Rect r);
     }
     
-    public static abstract class CurveDisplay extends Display {
+    public static abstract class CurveDisplay implements Display {
         protected int n;
         
         public CurveDisplay(int n) {
@@ -80,6 +81,31 @@ public class Displays {
     /****************
      ***** Text *****
      ****************/
+    
+    public static class StringDisplay implements Display {
+        private String s;
+        
+        public StringDisplay(String s) {
+            this.s = s;
+        }
+        
+        @Override
+        public void display(PGraphics g, Rect t) {
+            //background
+            g.strokeWeight(2);
+            g.stroke(150);
+            g.noFill();
+            g.rectMode(CORNER);
+            g.rect(t.getX1(), t.getY1(), t.getWidth(), t.getHeight());
+            
+            //text
+            g.fill(g.color(20));
+            g.rectMode(CORNER);
+            g.textAlign(CENTER, CENTER);
+            g.textSize(16);
+            g.text(s, t.getX1(), t.getY1(), t.getWidth(), t.getHeight());
+        }
+    }
     
     public static class StringToggleDisplay implements ControllerDisplay<Toggle> {
         private String s;
