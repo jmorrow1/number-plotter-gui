@@ -18,6 +18,7 @@ import curves.UlamSpiral;
 import draw_modes.DrawMode;
 import draw_modes.ToChar;
 import draw_modes.ToImage;
+import draw_modes.ToPixel;
 import draw_modes.ToShape;
 import geom.Rect;
 import gui.Displays.DiamondToggleDisplay;
@@ -162,7 +163,8 @@ public class GUI extends PApplet implements ControllerListener {
         toggles.put(DrawMode.class.getSimpleName(), new Toggle[] {
             createToggle(1, new DrawShapeToggleDisplay(ToShape.SQUARE), new Rect(x, y, w1, h, CORNER), DrawMode.class.getSimpleName(), ToShape.class.getSimpleName()),
             createToggle(1, new StringToggleDisplay("a"), new Rect(x += w1+xMargin, y, w1, h, CORNER), DrawMode.class.getSimpleName(), ToChar.class.getSimpleName()),
-            createToggle(1, new StringToggleDisplay("img"), new Rect(x += w1+xMargin, y, w1, h, CORNER), DrawMode.class.getSimpleName(), ToImage.class.getSimpleName())
+            createToggle(1, new StringToggleDisplay("img"), new Rect(x += w1+xMargin, y, w1, h, CORNER), DrawMode.class.getSimpleName(), ToImage.class.getSimpleName()),
+            createToggle(1, new StringToggleDisplay("pxl"), new Rect(x += w1+xMargin, y, w1, h, CORNER), DrawMode.class.getSimpleName(), ToPixel.class.getSimpleName())
         });
     }
     

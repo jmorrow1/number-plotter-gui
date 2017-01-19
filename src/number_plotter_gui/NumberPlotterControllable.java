@@ -5,6 +5,11 @@ import draw_modes.DrawMode;
 import int_properties.IntProperty;
 import int_properties.IntSequence;
 
+/**
+ * 
+ * @author James Morrow [jamesmorrowdesign.com]
+ *
+ */
 public interface NumberPlotterControllable {
     public final static String sequence = IntSequence.class.getSimpleName();
     public final static String curve = Curve.class.getSimpleName();

@@ -6,6 +6,11 @@ import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PVector;
 
+/**
+ * 
+ * @author James Morrow [jamesmorrowdesign.com]
+ *
+ */
 public class ShapeIcons {
 	public static class Diamond implements ControllerDisplay<Toggle> {
 		private int n;

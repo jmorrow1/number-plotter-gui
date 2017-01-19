@@ -4,6 +4,11 @@ import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PImage;
 
+/**
+ * 
+ * @author James Morrow [jamesmorrowdesign.com]
+ *
+ */
 public class ToImage implements DrawMode {
     private PImage img;
     private int bkgdCol, errorCol;
@@ -15,9 +20,9 @@ public class ToImage implements DrawMode {
     }
 
     @Override
-    public void draw(int num, int state, int maxState, float x, float y, float cellSqrt, PGraphics pg) {
-        pg.background(255);
-        pg.loadPixels();
+    public void draw(int num, int state, int maxState, float x, float y, float cellSqrt, PGraphics g) {
+        g.background(255);
+        g.loadPixels();
 
         if (state != 0) {
             int i = (int) (x - cellSqrt / 2f);
@@ -31,18 +36,18 @@ public class ToImage implements DrawMode {
                     int index = i * img.height + j;
 
                     if (index < img.pixels.length) {
-                        if (index < pg.pixels.length) {
-                            pg.pixels[index] = img.pixels[index];
+                        if (index < g.pixels.length) {
+                            g.pixels[index] = img.pixels[index];
                         }
-                    } else if (index < pg.pixels.length) {
-                        pg.pixels[index] = errorCol;
+                    } else if (index < g.pixels.length) {
+                        g.pixels[index] = errorCol;
                     }
                     j++;
                 }
                 i++;
             }
         }
-        pg.updatePixels();
+        g.updatePixels();
 
     }
 

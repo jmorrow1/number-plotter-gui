@@ -4,6 +4,11 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
 
+/**
+ * 
+ * @author James Morrow [jamesmorrowdesign.com]
+ *
+ */
 public class ToShape implements DrawMode {
     // primitive shape
     public final static int CIRCLE = 0, SQUARE = 1, TEXT = 2;
@@ -34,20 +39,20 @@ public class ToShape implements DrawMode {
     }
 
     @Override
-    public void draw(int num, int state, int maxState, float x, float y, float cellSqrt, PGraphics pg) {
+    public void draw(int num, int state, int maxState, float x, float y, float cellSqrt, PGraphics g) {
         float size = cellSqrt * PApplet.map(state, 0, maxState, minStateSizeMult, maxStateSizeMult);
         float normalizedState = (float) state / (float) maxState;
         float opacity = PApplet.lerp(minStateOpacity, maxStateOpacity, normalizedState);
-        int fillColor = pg.lerpColor(minStateFillColor, maxStateFillColor, normalizedState);
+        int fillColor = g.lerpColor(minStateFillColor, maxStateFillColor, normalizedState);
         if (showStroke) {
-            pg.stroke(0);
+            g.stroke(0);
         } else {
-            pg.noStroke();
+            g.noStroke();
         }
 
         if (state != 0) {
-            pg.fill(fillColor, opacity);
-            drawPrimitiveShape(num, x, y, size, pg);
+            g.fill(fillColor, opacity);
+            drawPrimitiveShape(num, x, y, size, g);
         }
 
     }

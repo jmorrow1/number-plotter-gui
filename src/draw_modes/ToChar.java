@@ -3,6 +3,11 @@ package draw_modes;
 import processing.core.PConstants;
 import processing.core.PGraphics;
 
+/**
+ * 
+ * @author James Morrow [jamesmorrowdesign.com]
+ *
+ */
 public class ToChar implements DrawMode {
     private StringBuffer s;
     private char errorChar;
@@ -13,12 +18,12 @@ public class ToChar implements DrawMode {
     }
 
     @Override
-    public void draw(int num, int state, int maxState, float x, float y, float cellSqrt, PGraphics pg) {
-        pg.fill(0);
-        pg.textSize(cellSqrt);
-        pg.textAlign(PConstants.CENTER, PConstants.CENTER);
+    public void draw(int num, int state, int maxState, float x, float y, float cellSqrt, PGraphics g) {
+        g.fill(0);
+        g.textSize(cellSqrt);
+        g.textAlign(PConstants.CENTER, PConstants.CENTER);
         char c = state < s.length() ? s.charAt(state) : errorChar;
-        pg.text(c, x, y);
+        g.text(c, x, y);
     }
 
     public void setChar(int i, char c) {

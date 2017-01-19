@@ -12,6 +12,7 @@ import curves.UlamSpiral;
 import draw_modes.DrawMode;
 import draw_modes.ToChar;
 import draw_modes.ToImage;
+import draw_modes.ToPixel;
 import draw_modes.ToShape;
 import geom.Rect;
 import gui.GUI;
@@ -74,6 +75,7 @@ public class App extends PApplet implements NumberPlotterControllable {
     // All possible draw modes
     private HashMap<String, DrawMode> drawModes = new HashMap<String, DrawMode>();
     private ToChar toChar;
+    private ToPixel toPixel;
     private ToImage toImg;
     private ToShape toShape;
 
@@ -123,6 +125,7 @@ public class App extends PApplet implements NumberPlotterControllable {
         // init all possible draw modes
         toShape = (ToShape)put(drawModes, new ToShape(ToShape.CIRCLE, 1, 1, 0xffffffff, 0, 200, 200, false));
         toChar = (ToChar)put(drawModes, new ToChar("x.", '?'));
+        toPixel = (ToPixel)put(drawModes, new ToPixel(color(255, 0, 0), color(0, 255, 0)));
 
         // init current settings
         sequence = integers;
@@ -172,6 +175,8 @@ public class App extends PApplet implements NumberPlotterControllable {
     }
 
     private void drawPoints() {
+        drawMode.preDraw(g);
+        
         for (int n = 0; n < pts.length; n++) {
             if (pts[n] != null) {
                 long y = sequence.nth(n + 1);
@@ -179,6 +184,8 @@ public class App extends PApplet implements NumberPlotterControllable {
                         cellSize * pts[n].x, cellSize * pts[n].y, numberSize, g);
             }
         }
+        
+        drawMode.postDraw(g);
     }
 
     /***********************************
@@ -230,6 +237,7 @@ public class App extends PApplet implements NumberPlotterControllable {
         if (newDrawMode != null) {
             if (newDrawMode != drawMode) {
                 drawMode = newDrawMode;
+                drawData = true;
             }
         }
         else {
