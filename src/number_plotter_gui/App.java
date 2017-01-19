@@ -83,6 +83,7 @@ public class App extends PApplet implements NumberPlotterControllable {
     private Point[] pts = new Point[80000];
     private float cellSize = 3;
     private float numberSize = 4;
+    private float tx, ty;
     
     //drawing
     private int prevWidth, prevHeight;
@@ -125,7 +126,7 @@ public class App extends PApplet implements NumberPlotterControllable {
         // init all possible draw modes
         toShape = (ToShape)put(drawModes, new ToShape(ToShape.CIRCLE, 1, 1, 0xffffffff, 0, 200, 200, false));
         toChar = (ToChar)put(drawModes, new ToChar("x.", '?'));
-        toPixel = (ToPixel)put(drawModes, new ToPixel(color(255, 0, 0), color(0, 255, 0)));
+        toPixel = (ToPixel)put(drawModes, new ToPixel(color(0, 0, 0), color(255)));
 
         // init current settings
         sequence = integers;
@@ -164,16 +165,15 @@ public class App extends PApplet implements NumberPlotterControllable {
 
             Rect bounds = bounds(pts);
             bounds.scale(cellSize, cellSize);
-            float tx = 0.5f * (width - bounds.getWidth()) - bounds.getX1();
-            float ty = 0.5f * (height - bounds.getHeight()) - bounds.getY1();
-            translate(tx, ty);
+            tx = 0.5f * (width - bounds.getWidth()) - bounds.getX1();
+            ty = 0.5f * (height - bounds.getHeight()) - bounds.getY1();
             drawPoints();
             popMatrix();
             
             drawData = false;
         }
     }
-
+    
     private void drawPoints() {
         drawMode.preDraw(g);
         
@@ -181,7 +181,7 @@ public class App extends PApplet implements NumberPlotterControllable {
             if (pts[n] != null) {
                 long y = sequence.nth(n + 1);
                 drawMode.draw(n, property.evaluate(y), property.numPossibleStates() - 1,
-                        cellSize * pts[n].x, cellSize * pts[n].y, numberSize, g);
+                        tx + cellSize * pts[n].x, ty + cellSize * pts[n].y, numberSize, g);
             }
         }
         

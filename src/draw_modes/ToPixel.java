@@ -28,7 +28,7 @@ public class ToPixel implements DrawMode {
         int j = (int)y;
         int k = i + j*g.width;
 
-        if (k < g.pixels.length) {
+        if (0 <= k && k < g.pixels.length) {
             float amt = PApplet.map(state, 0, maxState, 0, 1);
             int color = PApplet.lerpColor(minStateFillColor, maxStateFillColor, amt, PApplet.RGB);
             g.pixels[k] = color;
